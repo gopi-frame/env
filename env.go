@@ -1,15 +1,35 @@
+// Package env provides a simple way to load environment variables from files.
 package env
 
 import (
 	"encoding/json"
 	"errors"
-	"github.com/caarlos0/env/v11"
-	"github.com/joho/godotenv"
 	"io"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/caarlos0/env/v11"
+	"github.com/joho/godotenv"
 )
+
+func init() {
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	if err := Set("APP_WD", wd); err != nil {
+		panic(err)
+	}
+	exe, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	if err := Set("APP_ROOT", filepath.Dir(exe)); err != nil {
+		panic(err)
+	}
+}
 
 // Load loads the named file(s) into the environment.
 func Load(filenames ...string) error {
